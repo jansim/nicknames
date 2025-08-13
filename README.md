@@ -8,7 +8,9 @@
 [![R-CMD-check](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of nicknames is to …
+Nicknames allows you to specify human readable names for the columns in
+your data once and then reuse them across your project to rename plots
+axes, dataframe columns, tables and anything else.
 
 ## Installation
 
@@ -53,14 +55,6 @@ ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
 
 ``` r
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 
 mtcars |>
   select(mpg, hp, cyl) |>

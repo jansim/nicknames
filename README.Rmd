@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of nicknames is to ...
+Nicknames allows you to specify human readable names for the columns in your data once and then reuse them across your project to rename plots axes, dataframe columns, tables and anything else.
 
 ## Installation
 
@@ -46,7 +46,7 @@ nn_register(c(
 
 Including ggplot2 plots...
 
-```{r ex-ggplot}
+```{r ex-ggplot, fig.height=3, fig.width=7}
 library(ggplot2)
 
 # Create plot and apply nickname labels
@@ -57,7 +57,7 @@ ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
 
 ...dataframes...
 
-```{r ex-df}
+```{r ex-df, message=FALSE}
 library(dplyr)
 
 mtcars |>
