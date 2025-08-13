@@ -1,4 +1,37 @@
-
+#' Map Names to Aesthetic Labels in ggplot2
+#'
+#' This function automatically maps variable names to labels based on a plot's
+#' aesthetic mapping. It provides a convenient way to set multiple labels at
+#' once by matching the names provided to aes / used by default in ggplot with
+#' a prespecified list.
+#'
+#' This is particularly useful when you have a consistent naming scheme for
+#' variables and want to apply human-readable labels without manually specifying
+#' each aesthetic.
+#'
+#' @param names A named list or vector where names are variable names and values
+#'   are the desired labels for those variables in the plot.
+#'
+#' @return An object of class "labs_map" that can be added to a ggplot object
+#'   using the + operator. When added, it will automatically apply appropriate
+#'   labels based on the plot's aesthetic mappings.
+#'
+#'
+#' @examples
+#' library(ggplot2)
+#'
+#' # Create plot and apply labels
+#' ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+#'   geom_point() +
+#'   labs_map(c(
+#'     "mpg" = "Miles per Gallon",
+#'     "hp" = "Horsepower",
+#'     "factor(cyl)" = "Number of\nCylinders"
+#'   ))
+#'
+#' @seealso \code{\link[ggplot2]{labs}} for manual label setting
+#'
+#' @export
 labs_map <- function(names) {
   if (requireNamespace("ggplot2", quietly = TRUE)) {
     # Register S3 Method for ggplot_add
