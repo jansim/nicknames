@@ -176,3 +176,19 @@ test_that("labs_map works with a list", {
   expect_equal(p$labels$x, "Weight (1000 lbs)")
   expect_equal(p$labels$y, "Miles/(US) gallon")
 })
+
+test_that("labs_map works with an environment (for internal use only)", {
+  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+    ggplot2::geom_point()
+
+  env <- new.env(parent = emptyenv())
+  env$wt <- "Weight (1000 lbs)"
+  env$mpg <- "Miles/(US) gallon"
+
+  p <- p +
+    labs_map(env)
+
+  built_plot <- ggplot2::ggplot_build(p)
+  expect_equal(p$labels$x, "Weight (1000 lbs)")
+  expect_equal(p$labels$y, "Miles/(US) gallon")
+})
