@@ -1,0 +1,73 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# nicknames
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+The goal of nicknames is to ...
+
+## Installation
+
+You can install the development version of nicknames from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("jansim/nicknames")
+```
+
+## Example
+
+With nicknames, you can register the mapping between columns in your data and human readable column names once and easily re-use them everywhere.
+
+```{r ex-setup}
+library(nicknames)
+
+nn_register(c(
+  "mpg" = "Miles per Gallon",
+  "hp" = "Horsepower",
+  "factor(cyl)" = "Number of\nCylinders"
+))
+```
+
+Including ggplot2 plots...
+
+```{r ex-ggplot}
+library(ggplot2)
+
+# Create plot and apply nickname labels
+ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+  geom_point() +
+  labs_nn()
+```
+
+...dataframes...
+
+```{r ex-df}
+library(dplyr)
+
+mtcars |>
+  select(mpg, hp, cyl) |>
+  nn() |>
+  head()
+```
+
+...and column names directly.
+
+```{r ex-char}
+nn("mpg")
+```
