@@ -68,8 +68,8 @@ nn_register <- function(mappings, dict = "default") {
 #' @export
 nn <- function(x, dict = "default") {
   env <- .get_nn_env(dict)
-  if (exists(x, envir = env, inherits = FALSE)) {
-    return(env[[x]])
-  }
-  return(x)
+
+  sapply(x, function(item) {
+    if (exists(item, envir = env, inherits = FALSE)) env[[item]] else item
+  }, USE.NAMES = FALSE)
 }

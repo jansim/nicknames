@@ -35,6 +35,23 @@ test_that("local_clear_nn_envs cleans up between tests", {
   expect_equal(nn("A"), "A")
 })
 
+test_that("nn works with vectors", {
+  local_clear_nn_envs()
+
+  nn_register(c(
+    a = "b",
+    A = "B"
+  ))
+
+  expect_equal(nn(c("a", "A")), c("b", "B"))
+
+  nn_register(c(
+    c = "d"
+  ))
+
+  expect_equal(nn(c("a", "A", "c", "d")), c("b", "B", "d", "d"))
+})
+
 test_that("multiple dictionaries work independently", {
   local_clear_nn_envs()
 
