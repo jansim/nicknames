@@ -3,18 +3,24 @@
 \name{nn_register}
 \alias{nn_register}
 \alias{nn}
+\alias{nn.default}
+\alias{nn.data.frame}
 \title{Nickname registration and lookup}
 \usage{
 nn_register(mappings, dict = "default")
 
 nn(x, dict = "default")
+
+\method{nn}{default}(x, dict = "default")
+
+\method{nn}{data.frame}(x, dict = "default")
 }
 \arguments{
 \item{mappings}{A named vector where names are original values and values are nicknames}
 
-\item{dict}{The dictionary name to use (defaults to "default")}
+\item{dict}{The dictionary name to use (defaults to "default").}
 
-\item{x}{The value to look up}
+\item{x}{The value to look up, this can be a dataframe or character vector.}
 }
 \value{
 \code{nn_register()} returns nothing.

@@ -14,8 +14,8 @@
 #' Register and look up nickname mappings.
 #'
 #' @param mappings A named vector where names are original values and values are nicknames
-#' @param x The value to look up
-#' @param dict The dictionary name to use (defaults to "default")
+#' @param x The value to look up, this can be a dataframe or character vector.
+#' @param dict The dictionary name to use (defaults to "default").
 #'
 #' @return
 #' \code{nn_register()} returns nothing.
@@ -67,9 +67,25 @@ nn_register <- function(mappings, dict = "default") {
 #' @rdname nn_register
 #' @export
 nn <- function(x, dict = "default") {
+  UseMethod("nn")
+}
+
+# Default renaming function, taking in single values or vectors
+#' @rdname nn_register
+#' @export
+nn.default <- function(x, dict = "default") {
   env <- .get_nn_env(dict)
 
   sapply(x, function(item) {
     if (exists(item, envir = env, inherits = FALSE)) env[[item]] else item
   }, USE.NAMES = FALSE)
+}
+
+# Dataframe variant running over colnames
+#' @rdname nn_register
+#' @export
+nn.data.frame <- function(x, dict = "default") {
+  new_colnames <- nn.default(colnames(x), dict = dict)
+  colnames(x) <- new_colnames
+  return(x)
 }
