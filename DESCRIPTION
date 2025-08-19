@@ -1,18 +1,18 @@
 Package: nicknames
-Title: What the Package Does (One Line, Title Case)
+Title: Apply Human Readable Names to Plot Axes, Dataframe Columns and Anywhere Else
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R:
+    person("Jan", "Simson", , "nicknames@simson.io", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9406-7761"))
+Description: Nicknames allows you to specify human readable names for the columns in your data once and then reuse them across your project to rename plots axes, dataframe columns, tables and anything else.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Suggests: 
+Suggests:
     ggplot2,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
-Imports: 
+Imports:
     rlang
 URL: http://simson.io/nicknames/
