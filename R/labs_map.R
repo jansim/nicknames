@@ -26,7 +26,17 @@
 #'   labs_map(c(
 #'     "mpg" = "Miles per Gallon",
 #'     "hp" = "Horsepower",
-#'     "factor(cyl)" = "Number of\nCylinders"
+#'     "cyl" = "Number of\nCylinders"
+#'   ))
+#'
+#' # Even though names (e.g. cyl) are extracted, exact matches take priority
+#' ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+#'   geom_point() +
+#'   labs_map(c(
+#'     "mpg" = "Miles per Gallon",
+#'     "hp" = "Horsepower",
+#'     "cyl" = "Number of\nCylinders",
+#'     "factor(cyl)" = "Number of\nCylinders (factor)"
 #'   ))
 #'
 #' @seealso \code{\link[ggplot2]{labs}} for manual label setting
@@ -47,17 +57,36 @@ labs_map <- function(names) {
   )
 }
 
+get_candidate_names <- function(expr) {
+  full_expr <- rlang::as_label(expr)
+  var_names <- all.vars(rlang::quo_get_expr(expr))
+
+  # Only use extracted varnames if there's only one variable involved
+  if (length(var_names) == 1) {
+    return(c(full_expr, var_names))
+  } else {
+    return(c(full_expr))
+  }
+}
+
 # Method that will handle the actual logic, arguments get forwarded
 ggplot_add.labs_map <- function(object, plot, object_name) {
   # Get the aesthetic mappings from the plot
   aes_mapping <- plot$mapping
 
   labs_args <- list()
-  # Retrieve correct names for all aesthetics
-  for (var_name in names(object$names)) {
-    for (aes_name in names(aes_mapping)) {
-      if (!is.null(aes_mapping[[aes_name]]) && rlang::as_label(aes_mapping[[aes_name]]) == var_name) {
-        labs_args[[aes_name]] <- object$names[[var_name]]
+
+  for (aes_name in names(aes_mapping)) {
+    if (!is.null(aes_mapping[[aes_name]])) {
+      aes_expr <- aes_mapping[[aes_name]]
+
+      # Get all candidate names (full expression + variable names)
+      candidate_names <- get_candidate_names(aes_expr)
+
+      # Find first match in order of preference
+      matching_name <- intersect(candidate_names, names(object$names))
+      if (length(matching_name) > 0) {
+        labs_args[[aes_name]] <- object$names[[matching_name[1]]]
       }
     }
   }

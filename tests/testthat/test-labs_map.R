@@ -192,3 +192,48 @@ test_that("labs_map works with an environment (for internal use only)", {
   expect_equal(p$labels$x, "Weight (1000 lbs)")
   expect_equal(p$labels$y, "Miles/(US) gallon")
 })
+
+test_that("labs_map strips function calls", {
+  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, fill = factor(vs))) +
+    ggplot2::geom_point(shape = 21, size = 3)
+
+  # Even loose values are matched
+  p <- p +
+    labs_map(c(
+      wt = "Weight (1000 lbs)",
+      mpg = "Miles per gallon",
+      vs = "Engine shape"
+    ))
+
+  expect_equal(p$labels$x, "Weight (1000 lbs)")
+  expect_equal(p$labels$y, "Miles per gallon")
+  expect_equal(p$labels$fill, "Engine shape")
+
+  # An exact match with the function call takes priority
+  p2 <- p +
+    labs_map(c(
+      wt = "Weight (1000 lbs)",
+      mpg = "Miles per gallon",
+      vs = "Engine shape",
+      "factor(vs)" = "Engine shape (factorized)"
+    ))
+
+  expect_equal(p2$labels$x, "Weight (1000 lbs)")
+  expect_equal(p2$labels$y, "Miles per gallon")
+  expect_equal(p2$labels$fill, "Engine shape (factorized)")
+})
+
+test_that("labs_map works with composite columns", {
+  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt+mpg, mpg)) +
+    ggplot2::geom_point()
+
+  p <- p +
+    labs_map(c(
+      wt = "Weight (1000 lbs)",
+      mpg = "Miles/(US) gallon"
+    ))
+
+  built_plot <- ggplot2::ggplot_build(p)
+  expect_equal(p$labels$x, "wt + mpg")
+  expect_equal(p$labels$y, "Miles/(US) gallon")
+})

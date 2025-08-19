@@ -34,7 +34,7 @@ library(nicknames)
 nn_register(c(
   "mpg" = "Miles per Gallon",
   "hp" = "Horsepower",
-  "factor(cyl)" = "Number of\nCylinders"
+  "cyl" = "Number of\nCylinders"
 ))
 ```
 
@@ -60,13 +60,13 @@ mtcars |>
   select(mpg, hp, cyl) |>
   nn() |>
   head()
-#>                   Miles per Gallon Horsepower cyl
-#> Mazda RX4                     21.0        110   6
-#> Mazda RX4 Wag                 21.0        110   6
-#> Datsun 710                    22.8         93   4
-#> Hornet 4 Drive                21.4        110   6
-#> Hornet Sportabout             18.7        175   8
-#> Valiant                       18.1        105   6
+#>                   Miles per Gallon Horsepower Number of\nCylinders
+#> Mazda RX4                     21.0        110                    6
+#> Mazda RX4 Wag                 21.0        110                    6
+#> Datsun 710                    22.8         93                    4
+#> Hornet 4 Drive                21.4        110                    6
+#> Hornet Sportabout             18.7        175                    8
+#> Valiant                       18.1        105                    6
 ```
 
 …and column names directly.
@@ -75,3 +75,19 @@ mtcars |>
 nn("mpg")
 #> [1] "Miles per Gallon"
 ```
+
+While variables names are extracted from within function calls
+(e.g. `factor(cyl)` above), more exact matches take priority if you need
+to be precise.
+
+``` r
+nn_register(c(
+  "factor(cyl)" = "Number of\nCylinders (factor)"
+))
+
+ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+  geom_point() +
+  labs_nn()
+```
+
+<img src="man/figures/README-ex-ggplot-exact-1.png" width="100%" />

@@ -35,7 +35,17 @@ ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
   labs_map(c(
     "mpg" = "Miles per Gallon",
     "hp" = "Horsepower",
-    "factor(cyl)" = "Number of\nCylinders"
+    "cyl" = "Number of\nCylinders"
+  ))
+
+# Even though names (e.g. cyl) are extracted, exact matches take priority
+ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+  geom_point() +
+  labs_map(c(
+    "mpg" = "Miles per Gallon",
+    "hp" = "Horsepower",
+    "cyl" = "Number of\nCylinders",
+    "factor(cyl)" = "Number of\nCylinders (factor)"
   ))
 
 }

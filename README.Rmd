@@ -40,7 +40,7 @@ library(nicknames)
 nn_register(c(
   "mpg" = "Miles per Gallon",
   "hp" = "Horsepower",
-  "factor(cyl)" = "Number of\nCylinders"
+  "cyl" = "Number of\nCylinders"
 ))
 ```
 
@@ -70,4 +70,16 @@ mtcars |>
 
 ```{r ex-char}
 nn("mpg")
+```
+
+While variables names are extracted from within function calls (e.g. `factor(cyl)` above), more exact matches take priority if you need to be precise.
+
+```{r ex-ggplot-exact, fig.height=3, fig.width=7}
+nn_register(c(
+  "factor(cyl)" = "Number of\nCylinders (factor)"
+))
+
+ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+  geom_point() +
+  labs_nn()
 ```
