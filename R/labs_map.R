@@ -57,15 +57,49 @@ labs_map <- function(names) {
   )
 }
 
+strip_function_calls <- function(expr) {
+  # Use expr directly if not a quosure
+  expr_val <- if (rlang::is_quosure(expr)) rlang::quo_get_expr(expr) else expr
+  # If it's a call to .data[[...]] or .data[...], return as is
+  if (rlang::is_call(expr_val, c("[[", "[")) && rlang::is_symbol(expr_val[[2]], ".data")) {
+    return(expr_val)
+  }
+  # If it's a function call, strip one layer and recurse
+  if (rlang::is_call(expr_val)) {
+    return(strip_function_calls(expr_val[[2]]))
+  }
+  # Otherwise, return as is
+  return(expr_val)
+}
+
 get_candidate_names <- function(expr) {
-  full_expr <- rlang::as_label(expr)
+  full_name <- rlang::as_label(expr)
+
+  # Check whether full_name contains .data
+  # This will only trigger in more complex scenarios, if it's just a single
+  # .data[["<...>"]] access, rlang::as_label will have already handled it
+  if (grepl("\\.data\\[\\[\"", full_name)) {
+    # If there is more than one .data occurrence, do not extract nested_name
+    if (length(gregexpr("\\.data\\[\\[\"", full_name)[[1]]) > 1 && gregexpr("\\.data\\[\\[\"", full_name)[[1]][1] != -1) {
+      return(c(full_name))
+    }
+
+    # Manually extract nested name to work with function calls
+    nested_name <- rlang::as_label(strip_function_calls(expr))
+    # Replace .data[["<...>"]] with just the variable name
+    full_name_replaced <- gsub("\\.data\\[\\[\"(.+?)\"\\]\\]", nested_name, full_name)
+
+    return(c(full_name, full_name_replaced, nested_name))
+  }
+
+  # Extract all variable names if a function is involved
   var_names <- all.vars(rlang::quo_get_expr(expr))
 
   # Only use extracted varnames if there's only one variable involved
   if (length(var_names) == 1) {
-    return(c(full_expr, var_names))
+    return(c(full_name, var_names))
   } else {
-    return(c(full_expr))
+    return(c(full_name))
   }
 }
 
