@@ -15,4 +15,6 @@ Suggests:
 Config/testthat/edition: 3
 Imports:
     rlang
-URL: http://simson.io/nicknames/
+URL: https://simson.io/nicknames/,
+    https://github.com/jansim/nicknames
+BugReports: https://github.com/jansim/nicknames/issues
