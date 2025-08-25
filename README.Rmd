@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# nicknames
+# nicknames <img src="man/figures/logo.svg" width="120" align="right" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jansim/nicknames/actions/workflows/R-CMD-check.yaml)
