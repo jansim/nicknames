@@ -14,6 +14,7 @@
 <meta property="og:title" content="Apply Human Readable Names to Plot Axes, Dataframe Columns and Anywhere Else">
 <meta name="description" content="Nicknames allows you to specify human readable names for the columns in your data once and then reuse them across your project to rename plots axes, dataframe columns, tables and anything else.">
 <meta property="og:description" content="Nicknames allows you to specify human readable names for the columns in your data once and then reuse them across your project to rename plots axes, dataframe columns, tables and anything else.">
+<meta property="og:image" content="http://simson.io/nicknames/logo.svg">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -38,6 +39,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/jansim/nicknames/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -46,8 +48,10 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="nicknames">nicknames<a class="anchor" aria-label="anchor" href="#nicknames"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.svg" class="logo" alt=""><h1 id="nicknames-">nicknames <a class="anchor" aria-label="anchor" href="#nicknames-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
 <p>Nicknames allows you to specify human readable names for the columns in your data once and then reuse them across your project to rename plots axes, dataframe columns, tables and anything else.</p>
@@ -64,7 +68,7 @@
 </h2>
 <p>With nicknames, you can register the mapping between columns in your data and human readable column names once and easily re-use them everywhere.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://simson.io/nicknames/">nicknames</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://simson.io/nicknames/" class="external-link">nicknames</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/nn_register.html">nn_register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"mpg"</span> <span class="op">=</span> <span class="st">"Miles per Gallon"</span>,</span>
@@ -111,7 +115,15 @@
 <p><img src="reference/figures/README-ex-ggplot-exact-1.png" width="100%"></p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/jansim/nicknames/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/jansim/nicknames/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
