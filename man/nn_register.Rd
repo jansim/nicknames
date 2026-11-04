@@ -5,6 +5,7 @@
 \alias{nn}
 \alias{nn.default}
 \alias{nn.data.frame}
+\alias{nn.factor}
 \title{Nickname registration and lookup}
 \usage{
 nn_register(mappings, dict = "default")
@@ -14,13 +15,17 @@ nn(x, dict = "default")
 \method{nn}{default}(x, dict = "default")
 
 \method{nn}{data.frame}(x, dict = "default")
+
+\method{nn}{factor}(x, dict = "default")
 }
 \arguments{
 \item{mappings}{A named vector where names are original values and values are nicknames}
 
 \item{dict}{The dictionary name to use (defaults to "default").}
 
-\item{x}{The value to look up, this can be a dataframe or character vector.}
+\item{x}{The value to look up, this can be a dataframe, factor or character
+vector. For factors, the levels are renamed (keeping their order) and a
+factor is returned.}
 }
 \value{
 \code{nn_register()} returns nothing.

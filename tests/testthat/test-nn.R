@@ -286,3 +286,83 @@ test_that("nn with data.frame handles duplicate column names after renaming", {
   expect_equal(result_df[[2]], c(4, 5, 6))  # Second column data
   expect_equal(result_df[[3]], c(7, 8, 9))  # Third column data
 })
+
+test_that("nn with factor renames levels and preserves their order", {
+  local_clear_nn_envs()
+
+  nn_register(c(low = "Low", high = "High"))
+
+  f <- factor(c("high", "low", "medium", "high"), levels = c("low", "medium", "high"))
+  result <- nn(f)
+
+  # Still a factor with the same length
+  expect_s3_class(result, "factor")
+  expect_length(result, 4)
+  # Level order is preserved, unmapped levels stay unchanged
+  expect_equal(levels(result), c("Low", "medium", "High"))
+  # Values map to the renamed levels
+  expect_equal(as.character(result), c("High", "Low", "medium", "High"))
+  # Underlying integer codes are unchanged
+  expect_equal(as.integer(result), as.integer(f))
+})
+
+test_that("nn with ordered factor keeps it ordered", {
+  local_clear_nn_envs()
+
+  nn_register(c(s = "Small", l = "Large"))
+
+  f <- factor(c("l", "s", "m"), levels = c("s", "m", "l"), ordered = TRUE)
+  result <- nn(f)
+
+  expect_s3_class(result, "ordered")
+  expect_equal(levels(result), c("Small", "m", "Large"))
+  expect_true(result[2] < result[1])
+})
+
+test_that("nn with factor keeps unused levels and NA values", {
+  local_clear_nn_envs()
+
+  nn_register(c(a = "A", unused = "Unused"))
+
+  f <- factor(c("a", NA, "b"), levels = c("unused", "a", "b"))
+  result <- nn(f)
+
+  expect_equal(levels(result), c("Unused", "A", "b"))
+  expect_equal(as.character(result), c("A", NA, "b"))
+})
+
+test_that("nn with factor uses the requested dictionary", {
+  local_clear_nn_envs()
+
+  nn_register(c(a = "A"), dict = "other")
+
+  f <- factor(c("a", "b"))
+  expect_equal(levels(nn(f)), c("a", "b"))
+  expect_equal(levels(nn(f, dict = "other")), c("A", "b"))
+})
+
+test_that("nn with factor merges levels mapped to the same nickname", {
+  local_clear_nn_envs()
+
+  nn_register(c(a = "same", b = "same"))
+
+  f <- factor(c("a", "b", "c"))
+  result <- nn(f)
+
+  expect_s3_class(result, "factor")
+  expect_equal(levels(result), c("same", "c"))
+  expect_equal(as.character(result), c("same", "same", "c"))
+})
+
+test_that("nn renames factor columns in data.frames without touching levels", {
+  local_clear_nn_envs()
+
+  nn_register(c(grp = "Group", a = "A"))
+
+  df <- data.frame(grp = factor(c("b", "a"), levels = c("b", "a")))
+  result <- nn(df)
+
+  expect_equal(colnames(result), "Group")
+  expect_s3_class(result$Group, "factor")
+  expect_equal(levels(result$Group), c("b", "a"))
+})

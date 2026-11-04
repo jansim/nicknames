@@ -2,6 +2,7 @@
 
 S3method(nn,data.frame)
 S3method(nn,default)
+S3method(nn,factor)
 export(labs_map)
 export(labs_nn)
 export(nn)

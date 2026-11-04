@@ -14,7 +14,9 @@
 #' Register and look up nickname mappings.
 #'
 #' @param mappings A named vector where names are original values and values are nicknames
-#' @param x The value to look up, this can be a dataframe or character vector.
+#' @param x The value to look up, this can be a dataframe, factor or character
+#'   vector. For factors, the levels are renamed (keeping their order) and a
+#'   factor is returned.
 #' @param dict The dictionary name to use (defaults to "default").
 #'
 #' @return
@@ -87,5 +89,13 @@ nn.default <- function(x, dict = "default") {
 nn.data.frame <- function(x, dict = "default") {
   new_colnames <- nn.default(colnames(x), dict = dict)
   colnames(x) <- new_colnames
+  return(x)
+}
+
+# Factor variant renaming the levels while preserving their order
+#' @rdname nn_register
+#' @export
+nn.factor <- function(x, dict = "default") {
+  levels(x) <- nn.default(levels(x), dict = dict)
   return(x)
 }
