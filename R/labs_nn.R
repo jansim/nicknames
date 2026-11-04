@@ -5,6 +5,8 @@
 #' then applying them using this function.
 #'
 #' This makes it easy to specify nice names once and use them across a project.
+#' Wildcard mappings and renaming functions registered via
+#' \code{\link{nn_register}} are supported as well.
 #'
 #' @param dict The dictionary name to use for nickname lookups (optional).
 #'
@@ -27,6 +29,7 @@
 #'
 #' @export
 labs_nn <- function(dict = "default") {
-  env <- .get_nn_env(dict)
-  labs_map(names = env)
+  object <- labs_map(names = list())
+  object$dict <- dict
+  object
 }

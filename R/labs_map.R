@@ -103,6 +103,23 @@ get_candidate_names <- function(expr) {
   }
 }
 
+# Find a label for candidate names in a nickname dictionary.
+# Candidates are checked in order of preference for exact / wildcard mappings,
+# if none matches, the default renaming function is applied to the first
+# (i.e. full) candidate name.
+lookup_dict_label <- function(candidate_names, dict) {
+  for (candidate in candidate_names) {
+    label <- .nn_lookup(candidate, dict = dict, use_default = FALSE)
+    if (!is.null(label)) {
+      return(label)
+    }
+  }
+  if (length(candidate_names) > 0) {
+    return(.nn_lookup(candidate_names[1], dict = dict, use_default = TRUE))
+  }
+  NULL
+}
+
 # Method that will handle the actual logic, arguments get forwarded
 ggplot_add.labs_map <- function(object, plot, object_name) {
   # Get the aesthetic mappings from the plot
@@ -117,10 +134,18 @@ ggplot_add.labs_map <- function(object, plot, object_name) {
       # Get all candidate names (full expression + variable names)
       candidate_names <- get_candidate_names(aes_expr)
 
-      # Find first match in order of preference
-      matching_name <- intersect(candidate_names, names(object$names))
-      if (length(matching_name) > 0) {
-        labs_args[[aes_name]] <- object$names[[matching_name[1]]]
+      if (!is.null(object$dict)) {
+        # Look up names in a nickname dictionary (see labs_nn)
+        label <- lookup_dict_label(candidate_names, object$dict)
+        if (!is.null(label)) {
+          labs_args[[aes_name]] <- label
+        }
+      } else {
+        # Find first match in order of preference
+        matching_name <- intersect(candidate_names, names(object$names))
+        if (length(matching_name) > 0) {
+          labs_args[[aes_name]] <- object$names[[matching_name[1]]]
+        }
       }
     }
   }

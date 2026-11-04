@@ -31,15 +31,14 @@ nn_add_labels <- function(df, dict = "default") {
     stop("Input must be a dataframe")
   }
 
-  env <- .get_nn_env(dict)
-
   # Get column names
   col_names <- colnames(df)
 
   # For each column, check if there's a nickname mapping and add label
   for (col_name in col_names) {
-    if (exists(col_name, envir = env, inherits = FALSE)) {
-      attr(df[[col_name]], "label") <- env[[col_name]]
+    label <- .nn_lookup(col_name, dict = dict)
+    if (!is.null(label)) {
+      attr(df[[col_name]], "label") <- label
     }
   }
 

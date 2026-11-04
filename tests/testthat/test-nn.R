@@ -286,3 +286,129 @@ test_that("nn with data.frame handles duplicate column names after renaming", {
   expect_equal(result_df[[2]], c(4, 5, 6))  # Second column data
   expect_equal(result_df[[3]], c(7, 8, 9))  # Third column data
 })
+
+test_that("functions can be used as mapping values", {
+  local_clear_nn_envs()
+
+  nn_register(list(
+    mpg = toupper,
+    hp = "Horsepower"
+  ))
+
+  expect_equal(nn("mpg"), "MPG")
+  expect_equal(nn("hp"), "Horsepower")
+  expect_equal(nn(c("mpg", "hp", "cyl")), c("MPG", "Horsepower", "cyl"))
+})
+
+test_that("wildcard mappings work with strings and functions", {
+  local_clear_nn_envs()
+
+  nn_register(list(
+    "score_*" = function(x) paste("Score:", sub("score_", "", x)),
+    "*_id" = "Identifier"
+  ))
+
+  expect_equal(nn("score_math"), "Score: math")
+  expect_equal(nn("score_"), "Score: ")
+  expect_equal(nn("user_id"), "Identifier")
+  expect_equal(nn("other"), "other")
+  # Wildcards are anchored to the full name
+  expect_equal(nn("my_score_math"), "my_score_math")
+  expect_equal(nn("user_id_2"), "user_id_2")
+})
+
+test_that("wildcards treat other regex characters literally", {
+  local_clear_nn_envs()
+
+  nn_register(c("a.b*" = "match", "(x)+*" = "parens"))
+
+  expect_equal(nn("a.bc"), "match")
+  expect_equal(nn("aXbc"), "aXbc")
+  expect_equal(nn("(x)+y"), "parens")
+  expect_equal(nn("xx"), "xx")
+})
+
+test_that("exact mappings take priority over wildcards", {
+  local_clear_nn_envs()
+
+  nn_register(c("x*" = "wildcard"))
+  nn_register(c("x1" = "exact"))
+
+  expect_equal(nn("x1"), "exact")
+  expect_equal(nn("x2"), "wildcard")
+})
+
+test_that("wildcards are checked in registration order and can be updated", {
+  local_clear_nn_envs()
+
+  nn_register(c("a*" = "first", "ab*" = "second"))
+  expect_equal(nn("abc"), "first")
+
+  # Updating keeps the pattern's position
+  nn_register(c("a*" = "updated"))
+  expect_equal(nn("abc"), "updated")
+  expect_equal(nn("b"), "b")
+})
+
+test_that("wildcard = FALSE treats * literally", {
+  local_clear_nn_envs()
+
+  nn_register(c("x*" = "literal"), wildcard = FALSE)
+
+  expect_equal(nn("x*"), "literal")
+  expect_equal(nn("x1"), "x1")
+})
+
+test_that("default renaming function is used as fallback", {
+  local_clear_nn_envs()
+
+  nn_register(c(mpg = "Miles per Gallon", "n_*" = "Count"), default = function(x) gsub("_", " ", x))
+
+  expect_equal(nn("mpg"), "Miles per Gallon")
+  expect_equal(nn("n_cars"), "Count")
+  expect_equal(nn("first_name"), "first name")
+})
+
+test_that("default can be registered on its own, kept and removed", {
+  local_clear_nn_envs()
+
+  nn_register(default = toupper)
+  expect_equal(nn("abc"), "ABC")
+
+  # Registering further mappings keeps the default
+  nn_register(c(a = "b"))
+  expect_equal(nn("a"), "b")
+  expect_equal(nn("abc"), "ABC")
+
+  # Passing NULL removes it
+  nn_register(default = NULL)
+  expect_equal(nn("abc"), "abc")
+  expect_equal(nn("a"), "b")
+})
+
+test_that("default is specific to a dictionary", {
+  local_clear_nn_envs()
+
+  nn_register(default = toupper, dict = "upper")
+
+  expect_equal(nn("abc"), "abc")
+  expect_equal(nn("abc", dict = "upper"), "ABC")
+})
+
+test_that("invalid defaults and renaming function results error", {
+  local_clear_nn_envs()
+
+  expect_error(nn_register(default = "not a function"), "must be a function")
+
+  nn_register(list(a = function(x) c(x, x)))
+  expect_error(nn("a"), "single value")
+})
+
+test_that("renaming functions work with data.frames and factors", {
+  local_clear_nn_envs()
+
+  nn_register(list("x_*" = toupper), default = function(x) paste0(x, "!"))
+
+  df <- data.frame(x_1 = 1, y = 2)
+  expect_equal(colnames(nn(df)), c("X_1", "y!"))
+})
