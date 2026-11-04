@@ -7,7 +7,7 @@
 \alias{nn.data.frame}
 \title{Nickname registration and lookup}
 \usage{
-nn_register(mappings, dict = "default")
+nn_register(mappings = NULL, dict = "default", default, wildcard = TRUE)
 
 nn(x, dict = "default")
 
@@ -16,9 +16,19 @@ nn(x, dict = "default")
 \method{nn}{data.frame}(x, dict = "default")
 }
 \arguments{
-\item{mappings}{A named vector where names are original values and values are nicknames}
+\item{mappings}{A named vector or list where names are original values and
+values are nicknames or functions which take the original value and
+return the nickname.}
 
 \item{dict}{The dictionary name to use (defaults to "default").}
+
+\item{default}{A function used to rename all values for which no mapping
+exists, e.g. \code{default = function(x) gsub("_", " ", x)}. Pass \code{NULL} to
+remove a previously registered default. If not specified, the current
+default is left unchanged.}
+
+\item{wildcard}{Whether a \code{*} in the names of \code{mappings} should be treated
+as a wildcard matching any sequence of characters (defaults to \code{TRUE}).}
 
 \item{x}{The value to look up, this can be a dataframe or character vector.}
 }
@@ -28,6 +38,23 @@ nn(x, dict = "default")
 }
 \description{
 Register and look up nickname mappings.
+}
+\details{
+Nicknames can be registered in three ways, which are checked in the
+following order during lookup:
+\enumerate{
+\item \strong{Exact mappings}, e.g. \code{c("mpg" = "Miles per Gallon")}.
+\item \strong{Wildcard mappings}, where \code{*} in the name matches any sequence of
+characters, e.g. \code{c("score_*" = "Score")}. Patterns are checked in the
+order they were registered. Set \code{wildcard = FALSE} to treat \code{*}
+literally.
+\item A \strong{default} renaming function, used for all values without a mapping.
+}
+
+Instead of a string, the value of a mapping can also be a function. It is
+called with the original value and should return the nickname. Use a
+\code{list()} to combine functions and strings, e.g.
+\code{list("score_*" = function(x) toupper(x), "mpg" = "Miles per Gallon")}.
 }
 \examples{
 # Register some nickname mappings
@@ -46,5 +73,15 @@ nn("John")      # Returns "John" (no mapping registered)
 nn_register(c("Jennifer" = "Jenny"), dict = "alt")
 nn("Jennifer")              # Returns "Jen" (from default dict)
 nn("Jennifer", dict = "alt") # Returns "Jenny" (from alt dict)
+
+# Use wildcards and renaming functions
+nn_register(list(
+  "score_*" = function(x) paste("Score", sub("score_", "", x))
+), dict = "fun")
+nn(c("score_math", "score_art"), dict = "fun") # "Score math" "Score art"
+
+# Use a default renaming function for everything else
+nn_register(default = function(x) gsub("_", " ", x), dict = "fun")
+nn("first_name", dict = "fun") # Returns "first name"
 
 }

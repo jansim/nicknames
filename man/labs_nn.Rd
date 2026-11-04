@@ -16,6 +16,8 @@ then applying them using this function.
 }
 \details{
 This makes it easy to specify nice names once and use them across a project.
+Wildcard mappings and renaming functions registered via
+\code{\link{nn_register}} are supported as well.
 }
 \examples{
 library(ggplot2)

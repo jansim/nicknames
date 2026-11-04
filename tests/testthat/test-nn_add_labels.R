@@ -112,3 +112,21 @@ test_that("nn_add_labels with data.frame handles duplicate column names after la
   expect_equal(result[[2]], col2)
   expect_equal(result[[3]], col3)
 })
+
+test_that("nn_add_labels supports wildcards, functions and defaults", {
+  local_clear_nn_envs()
+
+  df <- data.frame(score_math = 1, mpg = 2, other = 3)
+
+  # Without a default, only matching columns get labels
+  nn_register(list("score_*" = function(x) toupper(x), mpg = "Miles per Gallon"))
+  result <- nn_add_labels(df)
+  expect_equal(attr(result$score_math, "label"), "SCORE_MATH")
+  expect_equal(attr(result$mpg, "label"), "Miles per Gallon")
+  expect_null(attr(result$other, "label"))
+
+  # With a default, all columns get labels
+  nn_register(default = function(x) paste("Column", x))
+  result <- nn_add_labels(df)
+  expect_equal(attr(result$other, "label"), "Column other")
+})
